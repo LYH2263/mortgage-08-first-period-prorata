@@ -14,8 +14,13 @@ def init_db():
         conn.execute("INSERT INTO loans(name,principal,annual_rate,months) VALUES ('高利率种子',800000,6.8,240)")
         conn.execute("INSERT INTO settings(key,value) VALUES ('method','equal_payment')")
         sch = equal_payment_schedule(1000000, 3.5, 360)
-        slim = {"monthly_payment": sch["monthly_payment"], "total_interest": sch["total_interest"], "preview": sch["rows"][:3]}
+        slim = {"monthly_payment": sch["monthly_payment"], "total_interest": sch["total_interest"],
+                "first_period_days": sch["first_period_days"],
+                "daily_first_interest": sch["daily_first_interest"],
+                "first_interest": sch["first_interest"], "first_principal": sch["first_principal"],
+                "first_payment": sch["first_payment"], "subsequent_payment": sch["subsequent_payment"],
+                "preview": sch["rows"][:3]}
         conn.execute("INSERT INTO calc_runs(kind,loan_id,input_json,result_json,created_at) VALUES ('schedule',1,?,?,datetime('now'))",
-            (json.dumps({"principal": 1000000, "annual_rate": 3.5, "months": 360}), json.dumps(slim)))
+            (json.dumps({"principal": 1000000, "annual_rate": 3.5, "months": 360, "first_period_days": 30}), json.dumps(slim)))
         conn.commit()
     conn.close()
